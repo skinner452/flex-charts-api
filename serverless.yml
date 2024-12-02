@@ -1,0 +1,37 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: alecskinner
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: flexcharts
+service: lambda-api
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+functions:
+  machines:
+    handler: machines.handler
+    events:
+      - http:
+          path: machines
+          method: GET
+      - http:
+          path: machines
+          method: POST
+      - http:
+          path: machines/{id}
+          method: DELETE
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+  - serverless-offline-watcher
+
+custom:
+  serverless-offline-watcher:
+    - path:
+        - ./*.ts # Watch all root level TypeScript files
+        - ./shared/**/*.ts # Watch all TypeScript files in the shared directory
+      command: "echo Updated: $WATCHER_EVENT_PATH"
+      hook:
+        - offline:functionsUpdated

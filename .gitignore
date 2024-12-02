@@ -1,3 +1,5 @@
 .DS_STORE
+.serverless
+.env
 node_modules
-*.zip
+packages

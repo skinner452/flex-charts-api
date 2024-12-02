@@ -1,9 +1,10 @@
 {
   "name": "flex-charts-api",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "package": "rm flex-charts-api.zip && zip -r flex-charts-api.zip index.js node_modules package.json",
+    "package-machines": "rm -f packages/machines.zip && mkdir -p packages && zip -r packages/machines.zip machines.ts node_modules package.json shared",
+    "package": "npm run package-machines",
+    "start": "sls offline start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,7 +13,14 @@
   "description": "",
   "dependencies": {
     "@types/node": "^22.9.3",
+    "aws-sdk": "^2.1692.0",
     "mysql2": "^3.11.4"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.146",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-offline": "^14.3.4",
+    "serverless-offline-watcher": "^1.1.0"
+  }
 }
