@@ -3,7 +3,9 @@ import AWS from "aws-sdk";
 import { StatusCodes } from "http-status-codes";
 import { internalError } from "./errors";
 
-const cognito = new AWS.CognitoIdentityServiceProvider();
+const cognito = new AWS.CognitoIdentityServiceProvider({
+  region: process.env.AWS_REGION,
+});
 
 type User = {
   id: string;

@@ -15,7 +15,7 @@ machinesRouter.get("/", async (req, res, next): Promise<any> => {
       "SELECT id, name FROM machines WHERE user_id = ?",
       [user?.id]
     );
-    return res.status(StatusCodes.OK);
+    return res.json(rows);
   } catch (err) {
     return internalError(res, err);
   }
