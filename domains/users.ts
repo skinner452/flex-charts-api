@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import AWS from "aws-sdk";
 import { StatusCodes } from "http-status-codes";
-import { internalError } from "./errors";
+import { internalError } from "../utils/errors";
 
 const cognito = new AWS.CognitoIdentityServiceProvider({
   region: process.env.AWS_REGION,
@@ -11,10 +11,16 @@ type User = {
   id: string;
 };
 
-type GetUserResponse = {
-  user?: User;
-  errRes?: Response;
-};
+// This is a really useful type so that we can check if there is an error, and if not, TS knows that the user is defined
+type GetUserResponse =
+  | {
+      user: User;
+      errRes?: undefined;
+    }
+  | {
+      user?: undefined;
+      errRes: Response;
+    };
 
 export const getUser = async (
   req: Request,

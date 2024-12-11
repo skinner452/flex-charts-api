@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { getUser } from "../utils/auth";
+import { getUser } from "../domains/users";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
 import { body, validationResult } from "express-validator";
-import { DB } from "../utils/db";
+import { createSet, getSets } from "../domains/sets";
+import { SetCreate } from "../types/sets";
+import { getMachine } from "../domains/machines";
 
 const setsRouter = Router();
 
@@ -12,36 +14,17 @@ setsRouter.get("/", async (req, res): Promise<any> => {
     const { user, errRes } = await getUser(req, res);
     if (errRes) return errRes;
 
-    const [rows] = await DB.query(
-      `SELECT
-        sets.id,
-        sets.weight,
-        sets.reps,
-        sets.datetime,
-        machines.id AS machine_id,
-        machines.name AS machine_name
-      FROM sets
-      JOIN machines ON sets.machine_id = machines.id
-      WHERE machines.user_id = ?`,
-      [user?.id]
-    );
-    return res.json(rows);
+    const sets = await getSets(user.id);
+    return res.json(sets);
   } catch (err) {
     return internalError(res, err);
   }
 });
 
-type SetsPostRequest = {
-  machineID: number;
-  reps: number;
-  weight: number;
-  datetime: Date;
-};
-
 setsRouter.post(
   "/",
   [
-    body("machineID").isInt(),
+    body("machineID").isInt(), // Aligned with the SetCreate type
     body("reps").isInt(),
     body("weight").isInt(),
     body("datetime").isISO8601(),
@@ -58,28 +41,15 @@ setsRouter.post(
         });
       }
 
-      const validatedBody = req.body as SetsPostRequest;
+      const validatedBody = req.body as SetCreate;
 
-      // Verify that the machine belongs to the user
-      const [rows] = await DB.query<any[]>(
-        "SELECT id FROM machines WHERE user_id = ? AND id = ?",
-        [user?.id, validatedBody.machineID]
-      );
-      if (rows.length === 0) {
+      if (getMachine(user.id, validatedBody.machineID) === null) {
         return res.status(StatusCodes.FORBIDDEN).json({
           error: "Machine does not belong to user",
         });
       }
 
-      await DB.execute(
-        "INSERT INTO sets (machine_id, weight, reps, datetime) VALUES (?, ?, ?, ?)",
-        [
-          validatedBody.machineID,
-          validatedBody.weight,
-          validatedBody.reps,
-          validatedBody.datetime,
-        ]
-      );
+      await createSet(user.id, validatedBody);
       return res.status(StatusCodes.CREATED).send();
     } catch (err) {
       return internalError(res, err);
