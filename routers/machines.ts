@@ -3,10 +3,11 @@ import { DB } from "../utils/db";
 import { getUser } from "../utils/auth";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
+import { body, validationResult } from "express-validator";
 
 const machinesRouter = Router();
 
-machinesRouter.get("/", async (req, res, next): Promise<any> => {
+machinesRouter.get("/", async (req, res): Promise<any> => {
   try {
     const { user, errRes } = await getUser(req, res);
     if (errRes) return errRes;
@@ -21,34 +22,43 @@ machinesRouter.get("/", async (req, res, next): Promise<any> => {
   }
 });
 
-machinesRouter.post("/", async (req, res, next): Promise<any> => {
-  try {
-    const { user, errRes } = await getUser(req, res);
-    if (errRes) return errRes;
+type MachinesPostRequest = {
+  name: string;
+};
+machinesRouter.post(
+  "/",
+  [body("name").isString()],
+  async (req, res): Promise<any> => {
+    try {
+      const { user, errRes } = await getUser(req, res);
+      if (errRes) return errRes;
 
-    const { name } = req.body;
-    if (!name) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Name is required",
-      });
-    }
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          errors: validationErrors.array(),
+        });
+      }
 
-    await DB.query("INSERT INTO machines (name, user_id) VALUES (?, ?)", [
-      name,
-      user?.id,
-    ]);
-    return res.status(StatusCodes.CREATED).send();
-  } catch (err) {
-    if (err.code === "ER_DUP_ENTRY") {
-      return res.status(StatusCodes.CONFLICT).json({
-        error: "Name already exists",
-      });
+      const validatedBody = req.body as MachinesPostRequest;
+
+      await DB.execute("INSERT INTO machines (name, user_id) VALUES (?, ?)", [
+        validatedBody.name,
+        user?.id,
+      ]);
+      return res.status(StatusCodes.CREATED).send();
+    } catch (err) {
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(StatusCodes.CONFLICT).json({
+          error: "Name already exists",
+        });
+      }
+      return internalError(res, err);
     }
-    return internalError(res, err);
   }
-});
+);
 
-machinesRouter.delete("/:id", async (req, res, next): Promise<any> => {
+machinesRouter.delete("/:id", async (req, res): Promise<any> => {
   try {
     const { user, errRes } = await getUser(req, res);
     if (errRes) return errRes;
