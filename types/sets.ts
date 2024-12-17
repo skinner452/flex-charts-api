@@ -10,6 +10,7 @@ export type SetType = {
 };
 
 export type SetCreate = {
+  sessionID: number;
   machineID: number;
   reps: number;
   weight: number;

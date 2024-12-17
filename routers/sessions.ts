@@ -2,28 +2,17 @@ import { Router } from "express";
 import { getUser } from "../domains/users";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
-import { body, param, validationResult } from "express-validator";
-import { createMachine, deleteMachine, getMachines } from "../domains/machines";
-import { MachineCreate } from "../types/machines";
+import { param, validationResult, query } from "express-validator";
+import { createSession, deleteSession, getSessions } from "../domains/sessions";
+import { SessionFilters } from "../types/sessions";
+import { parseBool } from "../utils/parseBool";
 
-const machinesRouter = Router();
+const sessionsRouter = Router();
 
-machinesRouter.get("/", async (req, res): Promise<any> => {
-  try {
-    const { user, errRes } = await getUser(req, res);
-    if (errRes) return errRes;
-
-    const machines = await getMachines(user.id);
-    return res.json(machines);
-  } catch (err) {
-    return internalError(res, err);
-  }
-});
-
-machinesRouter.post(
+sessionsRouter.get(
   "/",
-  [body("name").isString()], // Aligned with the MachineCreate type
-  async (req, res): Promise<any> => {
+  query("isActive").isBoolean().optional(),
+  async (req: any, res): Promise<any> => {
     try {
       const { user, errRes } = await getUser(req, res);
       if (errRes) return errRes;
@@ -35,22 +24,31 @@ machinesRouter.post(
         });
       }
 
-      const validatedBody = req.body as MachineCreate;
+      const filters = {
+        isActive: parseBool(req.query.isActive),
+      } as SessionFilters;
 
-      await createMachine(validatedBody, user.id);
-      return res.status(StatusCodes.CREATED).send();
+      const sessions = await getSessions(user.id, filters);
+      return res.json(sessions);
     } catch (err) {
-      if (err.code === "ER_DUP_ENTRY") {
-        return res.status(StatusCodes.CONFLICT).json({
-          error: "Name already exists",
-        });
-      }
       return internalError(res, err);
     }
   }
 );
 
-machinesRouter.delete(
+sessionsRouter.post("/", async (req, res): Promise<any> => {
+  try {
+    const { user, errRes } = await getUser(req, res);
+    if (errRes) return errRes;
+
+    await createSession(user.id);
+    return res.status(StatusCodes.CREATED).send();
+  } catch (err) {
+    return internalError(res, err);
+  }
+});
+
+sessionsRouter.delete(
   "/:id",
   param("id").isInt(),
   async (req: any, res): Promise<any> => {
@@ -68,7 +66,7 @@ machinesRouter.delete(
       const { id: idStr } = req.params;
       const id = parseInt(idStr, 10);
 
-      await deleteMachine(id, user.id);
+      await deleteSession(id, user.id);
       return res.send();
     } catch (err) {
       return internalError(res, err);
@@ -76,4 +74,4 @@ machinesRouter.delete(
   }
 );
 
-export default machinesRouter;
+export default sessionsRouter;

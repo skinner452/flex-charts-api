@@ -10,11 +10,11 @@
 
 - Using the serverless offline plugin, you can run the lambda and api gateway all locally
 
-- Copy the example env `cp .env.example .env`
+- Copy the example env `cp .env.example .env.local`
 
-- Update the values in your .env file to match your database credentials
+- Update the values in your new `.env.local` file to match your database credentials
 
-- Run `serverless offline`
+- Run `serverless offline --stage local` to run the API using the local environment variables
 
 ## Migrations
 

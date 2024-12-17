@@ -9,7 +9,7 @@ export const getMachines = async (userID: string) => {
   return rows as Machine[];
 };
 
-export const getMachine = async (userID: string, machineID: number) => {
+export const getMachine = async (machineID: number, userID: string) => {
   const [rows] = await DB.query<any[]>(
     "SELECT id, user_id, name FROM machines WHERE id = ? AND user_id = ?",
     [machineID, userID]
@@ -17,14 +17,14 @@ export const getMachine = async (userID: string, machineID: number) => {
   return rows.length ? (rows[0] as Machine) : null;
 };
 
-export const createMachine = async (userID: string, data: MachineCreate) => {
+export const createMachine = async (data: MachineCreate, userID: string) => {
   await DB.execute("INSERT INTO machines (name, user_id) VALUES (?, ?)", [
     data.name,
     userID,
   ]);
 };
 
-export const deleteMachine = async (userID: string, machineID: number) => {
+export const deleteMachine = async (machineID: number, userID: string) => {
   await DB.execute("DELETE FROM machines WHERE id = ? AND user_id = ?", [
     machineID,
     userID,

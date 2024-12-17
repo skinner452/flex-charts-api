@@ -6,6 +6,7 @@ import { body, validationResult } from "express-validator";
 import { createSet, getSets } from "../domains/sets";
 import { SetCreate } from "../types/sets";
 import { getMachine } from "../domains/machines";
+import { getSession } from "../domains/sessions";
 
 const setsRouter = Router();
 
@@ -24,7 +25,8 @@ setsRouter.get("/", async (req, res): Promise<any> => {
 setsRouter.post(
   "/",
   [
-    body("machineID").isInt(), // Aligned with the SetCreate type
+    body("sessionID").isInt(), // Aligned with the SetCreate type
+    body("machineID").isInt(),
     body("reps").isInt(),
     body("weight").isInt(),
     body("datetime").isISO8601(),
@@ -43,7 +45,13 @@ setsRouter.post(
 
       const validatedBody = req.body as SetCreate;
 
-      if (getMachine(user.id, validatedBody.machineID) === null) {
+      if (getSession(validatedBody.sessionID, user.id) === null) {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          error: "Session does not belong to user",
+        });
+      }
+
+      if (getMachine(validatedBody.machineID, user.id) === null) {
         return res.status(StatusCodes.FORBIDDEN).json({
           error: "Machine does not belong to user",
         });
