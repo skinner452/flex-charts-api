@@ -1,3 +1,4 @@
+import { ResultSetHeader } from "mysql2";
 import { Machine, MachineCreate } from "../types/machines";
 import { DB } from "../utils/db";
 
@@ -18,10 +19,11 @@ export const getMachine = async (machineID: number, userID: string) => {
 };
 
 export const createMachine = async (data: MachineCreate, userID: string) => {
-  await DB.execute("INSERT INTO machines (name, user_id) VALUES (?, ?)", [
-    data.name,
-    userID,
-  ]);
+  const [result] = await DB.execute<ResultSetHeader>(
+    "INSERT INTO machines (name, user_id) VALUES (?, ?)",
+    [data.name, userID]
+  );
+  return result.insertId;
 };
 
 export const deleteMachine = async (machineID: number, userID: string) => {

@@ -3,7 +3,12 @@ import { getUser } from "../domains/users";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
 import { body, param, validationResult } from "express-validator";
-import { createMachine, deleteMachine, getMachines } from "../domains/machines";
+import {
+  createMachine,
+  deleteMachine,
+  getMachine,
+  getMachines,
+} from "../domains/machines";
 import { MachineCreate } from "../types/machines";
 
 const machinesRouter = Router();
@@ -37,8 +42,9 @@ machinesRouter.post(
 
       const validatedBody = req.body as MachineCreate;
 
-      await createMachine(validatedBody, user.id);
-      return res.status(StatusCodes.CREATED).send();
+      const machineID = await createMachine(validatedBody, user.id);
+      const machine = await getMachine(machineID, user.id);
+      return res.json(machine);
     } catch (err) {
       if (err.code === "ER_DUP_ENTRY") {
         return res.status(StatusCodes.CONFLICT).json({

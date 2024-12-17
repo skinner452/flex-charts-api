@@ -3,7 +3,12 @@ import { getUser } from "../domains/users";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
 import { param, validationResult, query } from "express-validator";
-import { createSession, deleteSession, getSessions } from "../domains/sessions";
+import {
+  createSession,
+  deleteSession,
+  getSession,
+  getSessions,
+} from "../domains/sessions";
 import { SessionFilters } from "../types/sessions";
 import { parseBool } from "../utils/parseBool";
 
@@ -41,8 +46,16 @@ sessionsRouter.post("/", async (req, res): Promise<any> => {
     const { user, errRes } = await getUser(req, res);
     if (errRes) return errRes;
 
-    await createSession(user.id);
-    return res.status(StatusCodes.CREATED).send();
+    const existingSessions = await getSessions(user.id, { isActive: true });
+    if (existingSessions.length) {
+      return res.status(StatusCodes.CONFLICT).json({
+        error: "Active session already exists",
+      });
+    }
+
+    const sessionID = await createSession(user.id);
+    const session = await getSession(sessionID, user.id);
+    return res.json(session);
   } catch (err) {
     return internalError(res, err);
   }

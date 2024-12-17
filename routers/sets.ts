@@ -3,7 +3,7 @@ import { getUser } from "../domains/users";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
 import { body, validationResult } from "express-validator";
-import { createSet, getSets } from "../domains/sets";
+import { createSet, getSet, getSets } from "../domains/sets";
 import { SetCreate } from "../types/sets";
 import { getMachine } from "../domains/machines";
 import { getSession } from "../domains/sessions";
@@ -57,8 +57,9 @@ setsRouter.post(
         });
       }
 
-      await createSet(user.id, validatedBody);
-      return res.status(StatusCodes.CREATED).send();
+      const setID = await createSet(user.id, validatedBody);
+      const set = await getSet(setID, user.id);
+      return res.json(set);
     } catch (err) {
       return internalError(res, err);
     }
