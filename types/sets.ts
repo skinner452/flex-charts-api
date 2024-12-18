@@ -5,7 +5,7 @@ export type SetType = {
   id: number;
   weight: number;
   reps: number;
-  datetime: Date;
+  datetime: string;
   machine: Machine;
 };
 
@@ -14,5 +14,5 @@ export type SetCreate = {
   machineID: number;
   reps: number;
   weight: number;
-  datetime: Date;
+  datetime: string;
 };
