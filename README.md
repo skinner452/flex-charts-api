@@ -20,8 +20,8 @@
 
 - Run `node migrate.js`
 
-  - If you want to use an environment file other than `.env`, you can use the argument `--env=xyz` which will load the environment file `.env.xyz`
+  - If you want to use an environment file other than `.env`, you can use the argument `--env <name>` which will load the environment file `.env.<name>`
 
-  - If you want to target a specific migration, you can append `--migrationID=x` to the command. This will run the up or down scripts to reach the specified migration ID.
+  - If you want to target a specific migration, you can append `--migrationID <number>` to the command. This will run the up or down scripts to reach the specified migration ID.
 
   - If the migrations look correct, run it again with `--confirm` to apply the migrations

@@ -4,10 +4,15 @@ import dotenv from "dotenv";
 
 const main = async () => {
   // Parse the command line arguments
-  const args = process.argv.slice(2).reduce((acc, arg) => {
-    const [key, value] = arg.split("=");
-    acc.set(key.replace("--", ""), value);
-    return acc;
+  const args = new Map();
+  let key = null;
+  process.argv.slice(2).forEach((arg) => {
+    if (arg.startsWith("--")) {
+      key = arg.replace("--", "");
+    } else if (key !== null) {
+      args.set(key, arg);
+      key = null;
+    }
   }, new Map());
 
   // Get the specified environment file
