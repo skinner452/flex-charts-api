@@ -1,9 +1,9 @@
-export type Machine = {
+export type Exercise = {
   id: number;
   user_id: string;
   name: string;
 };
 
-export type MachineCreate = {
+export type ExerciseCreate = {
   name: string;
 };

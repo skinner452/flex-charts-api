@@ -4,30 +4,30 @@ import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
 import { body, param, validationResult } from "express-validator";
 import {
-  createMachine,
-  deleteMachine,
-  getMachine,
-  getMachines,
-} from "../domains/machines";
-import { MachineCreate } from "../types/machines";
+  createExercise,
+  deleteExercise,
+  getExercise,
+  getExercises,
+} from "../domains/exercises";
+import { ExerciseCreate } from "../types/exercises";
 
-const machinesRouter = Router();
+const exercisesRouter = Router();
 
-machinesRouter.get("/", async (req, res): Promise<any> => {
+exercisesRouter.get("/", async (req, res): Promise<any> => {
   try {
     const { user, errRes } = await getUser(req, res);
     if (errRes) return errRes;
 
-    const machines = await getMachines(user.id);
-    return res.json(machines);
+    const exercises = await getExercises(user.id);
+    return res.json(exercises);
   } catch (err) {
     return internalError(res, err);
   }
 });
 
-machinesRouter.post(
+exercisesRouter.post(
   "/",
-  [body("name").isString()], // Aligned with the MachineCreate type
+  [body("name").isString()], // Aligned with the ExerciseCreate type
   async (req, res): Promise<any> => {
     try {
       const { user, errRes } = await getUser(req, res);
@@ -40,11 +40,11 @@ machinesRouter.post(
         });
       }
 
-      const validatedBody = req.body as MachineCreate;
+      const validatedBody = req.body as ExerciseCreate;
 
-      const machineID = await createMachine(validatedBody, user.id);
-      const machine = await getMachine(machineID, user.id);
-      return res.json(machine);
+      const exerciseID = await createExercise(validatedBody, user.id);
+      const exercise = await getExercise(exerciseID, user.id);
+      return res.json(exercise);
     } catch (err) {
       if (err.code === "ER_DUP_ENTRY") {
         return res.status(StatusCodes.CONFLICT).json({
@@ -56,7 +56,7 @@ machinesRouter.post(
   }
 );
 
-machinesRouter.delete(
+exercisesRouter.delete(
   "/:id",
   param("id").isInt(),
   async (req: any, res): Promise<any> => {
@@ -74,7 +74,7 @@ machinesRouter.delete(
       const { id: idStr } = req.params;
       const id = parseInt(idStr, 10);
 
-      await deleteMachine(id, user.id);
+      await deleteExercise(id, user.id);
       return res.send();
     } catch (err) {
       return internalError(res, err);
@@ -82,4 +82,4 @@ machinesRouter.delete(
   }
 );
 
-export default machinesRouter;
+export default exercisesRouter;

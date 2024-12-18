@@ -3,33 +3,32 @@ import { getUser } from "../domains/users";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
 import { body, validationResult } from "express-validator";
-import { createSet, getSet, getSets } from "../domains/sets";
-import { SetCreate } from "../types/sets";
-import { getMachine } from "../domains/machines";
+import { createWorkout, getWorkout, getWorkouts } from "../domains/workouts";
+import { WorkoutCreate } from "../types/workouts";
+import { getExercise } from "../domains/exercises";
 import { getSession } from "../domains/sessions";
 
-const setsRouter = Router();
+const workoutsRouter = Router();
 
-setsRouter.get("/", async (req, res): Promise<any> => {
+workoutsRouter.get("/", async (req, res): Promise<any> => {
   try {
     const { user, errRes } = await getUser(req, res);
     if (errRes) return errRes;
 
-    const sets = await getSets(user.id);
-    return res.json(sets);
+    const workouts = await getWorkouts(user.id);
+    return res.json(workouts);
   } catch (err) {
     return internalError(res, err);
   }
 });
 
-setsRouter.post(
+workoutsRouter.post(
   "/",
   [
-    body("sessionID").isInt(), // Aligned with the SetCreate type
-    body("machineID").isInt(),
+    body("sessionID").isInt(), // Aligned with the WorkoutCreate type
+    body("exerciseID").isInt(),
     body("reps").isInt(),
     body("weight").isInt(),
-    body("datetime").isISO8601(),
   ],
   async (req, res): Promise<any> => {
     try {
@@ -43,7 +42,7 @@ setsRouter.post(
         });
       }
 
-      const validatedBody = req.body as SetCreate;
+      const validatedBody = req.body as WorkoutCreate;
 
       if (getSession(validatedBody.sessionID, user.id) === null) {
         return res.status(StatusCodes.FORBIDDEN).json({
@@ -51,19 +50,19 @@ setsRouter.post(
         });
       }
 
-      if (getMachine(validatedBody.machineID, user.id) === null) {
+      if (getExercise(validatedBody.exerciseID, user.id) === null) {
         return res.status(StatusCodes.FORBIDDEN).json({
-          error: "Machine does not belong to user",
+          error: "Exercise does not belong to user",
         });
       }
 
-      const setID = await createSet(user.id, validatedBody);
-      const set = await getSet(setID, user.id);
-      return res.json(set);
+      const workoutID = await createWorkout(user.id, validatedBody);
+      const workout = await getWorkout(workoutID, user.id);
+      return res.json(workout);
     } catch (err) {
       return internalError(res, err);
     }
   }
 );
 
-export default setsRouter;
+export default workoutsRouter;

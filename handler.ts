@@ -1,8 +1,8 @@
 import serverless from "serverless-http";
 import express from "express";
 import { StatusCodes } from "http-status-codes";
-import machinesRouter from "./routers/machines";
-import setsRouter from "./routers/sets";
+import exercisesRouter from "./routers/exercises";
+import workoutsRouter from "./routers/workouts";
 import sessionsRouter from "./routers/sessions";
 
 const app = express();
@@ -11,8 +11,8 @@ const app = express();
 app.use(express.json());
 
 // Attach routers
-app.use("/machines", machinesRouter);
-app.use("/sets", setsRouter);
+app.use("/exercises", exercisesRouter);
+app.use("/workouts", workoutsRouter);
 app.use("/sessions", sessionsRouter);
 
 // Unhandled routes should 404

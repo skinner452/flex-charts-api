@@ -8,12 +8,20 @@ const main = async () => {
   let key = null;
   process.argv.slice(2).forEach((arg) => {
     if (arg.startsWith("--")) {
+      if (key !== null) {
+        args.set(key, true);
+      }
+
       key = arg.replace("--", "");
     } else if (key !== null) {
       args.set(key, arg);
       key = null;
     }
-  }, new Map());
+  });
+
+  if (key !== null) {
+    args.set(key, true);
+  }
 
   // Get the specified environment file
   let envFile = ".env";
