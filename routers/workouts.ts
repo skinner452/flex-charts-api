@@ -28,6 +28,7 @@ workoutsRouter.post(
     body("sessionID").isInt(), // Aligned with the WorkoutCreate type
     body("exerciseID").isInt(),
     body("reps").isInt(),
+    body("sets").isInt(),
     body("weight").isInt(),
   ],
   async (req, res): Promise<any> => {

@@ -12,5 +12,6 @@ export type WorkoutCreate = {
   sessionID: number;
   exerciseID: number;
   reps: number;
+  sets: number;
   weight: number;
 };
