@@ -14,6 +14,22 @@ const workoutColumns = `
   exercises.name AS exercise_name
 `;
 
+const castWorkout = (row: any) => {
+  return {
+    id: row.id,
+    sessionID: row.session_id,
+    weight: row.weight,
+    reps: row.reps,
+    sets: row.sets,
+    created_on: row.created_on,
+    exercise: {
+      id: row.exercise_id,
+      user_id: row.exercise_user_id,
+      name: row.exercise_name,
+    },
+  } as Workout;
+};
+
 export const getWorkouts = async (userID: string, filters?: WorkoutFilters) => {
   let sql = `
     SELECT ${workoutColumns}
@@ -29,24 +45,7 @@ export const getWorkouts = async (userID: string, filters?: WorkoutFilters) => {
   }
 
   const [rows] = await DB.query<any[]>(sql, values);
-
-  const castedRows = rows.map((row) => {
-    return {
-      id: row.id,
-      sessionID: row.session_id,
-      weight: row.weight,
-      reps: row.reps,
-      sets: row.sets,
-      created_on: row.created_on,
-      exercise: {
-        id: row.exercise_id,
-        user_id: row.exercise_user_id,
-        name: row.exercise_name,
-      },
-    } as Workout;
-  });
-
-  return castedRows;
+  return rows.map((row) => castWorkout(row));
 };
 
 export const getWorkout = async (workoutID: number, userID: string) => {
@@ -58,7 +57,8 @@ export const getWorkout = async (workoutID: number, userID: string) => {
     [workoutID, userID]
   );
 
-  return rows.length ? (rows[0] as Workout) : null;
+  if (rows.length === 0) return null;
+  return castWorkout(rows[0]);
 };
 
 export const createWorkout = async (userID: string, data: WorkoutCreate) => {
@@ -67,4 +67,11 @@ export const createWorkout = async (userID: string, data: WorkoutCreate) => {
     [data.sessionID, data.exerciseID, data.weight, data.reps, data.sets]
   );
   return result.insertId;
+};
+
+export const deleteWorkout = async (workoutID: number, userID: string) => {
+  await DB.execute(
+    "DELETE FROM workouts WHERE id = ? AND exercise_id IN (SELECT id FROM exercises WHERE user_id = ?)",
+    [workoutID, userID]
+  );
 };

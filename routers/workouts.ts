@@ -2,8 +2,13 @@ import { Router } from "express";
 import { getUser } from "../domains/users";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
-import { body, query, validationResult } from "express-validator";
-import { createWorkout, getWorkout, getWorkouts } from "../domains/workouts";
+import { body, param, query, validationResult } from "express-validator";
+import {
+  createWorkout,
+  deleteWorkout,
+  getWorkout,
+  getWorkouts,
+} from "../domains/workouts";
 import { WorkoutCreate, WorkoutFilters } from "../types/workouts";
 import { getExercise } from "../domains/exercises";
 import { getSession } from "../domains/sessions";
@@ -69,6 +74,32 @@ workoutsRouter.post(
       const workoutID = await createWorkout(user.id, validatedBody);
       const workout = await getWorkout(workoutID, user.id);
       return res.json(workout);
+    } catch (err) {
+      return internalError(res, err);
+    }
+  }
+);
+
+workoutsRouter.delete(
+  "/:id",
+  param("id").isInt(),
+  async (req: any, res): Promise<any> => {
+    try {
+      const { user, errRes } = await getUser(req, res);
+      if (errRes) return errRes;
+
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          errors: validationErrors.array(),
+        });
+      }
+
+      const { id: idStr } = req.params;
+      const id = parseInt(idStr, 10);
+
+      await deleteWorkout(id, user.id);
+      return res.send();
     } catch (err) {
       return internalError(res, err);
     }

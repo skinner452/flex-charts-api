@@ -56,30 +56,4 @@ exercisesRouter.post(
   }
 );
 
-exercisesRouter.delete(
-  "/:id",
-  param("id").isInt(),
-  async (req: any, res): Promise<any> => {
-    try {
-      const { user, errRes } = await getUser(req, res);
-      if (errRes) return errRes;
-
-      const validationErrors = validationResult(req);
-      if (!validationErrors.isEmpty()) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          errors: validationErrors.array(),
-        });
-      }
-
-      const { id: idStr } = req.params;
-      const id = parseInt(idStr, 10);
-
-      await deleteExercise(id, user.id);
-      return res.send();
-    } catch (err) {
-      return internalError(res, err);
-    }
-  }
-);
-
 export default exercisesRouter;
