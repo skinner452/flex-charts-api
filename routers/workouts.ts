@@ -2,25 +2,34 @@ import { Router } from "express";
 import { getUser } from "../domains/users";
 import { internalError } from "../utils/errors";
 import { StatusCodes } from "http-status-codes";
-import { body, validationResult } from "express-validator";
+import { body, query, validationResult } from "express-validator";
 import { createWorkout, getWorkout, getWorkouts } from "../domains/workouts";
-import { WorkoutCreate } from "../types/workouts";
+import { WorkoutCreate, WorkoutFilters } from "../types/workouts";
 import { getExercise } from "../domains/exercises";
 import { getSession } from "../domains/sessions";
+import { parseIntOrUndefined } from "../utils/parse";
 
 const workoutsRouter = Router();
 
-workoutsRouter.get("/", async (req, res): Promise<any> => {
-  try {
-    const { user, errRes } = await getUser(req, res);
-    if (errRes) return errRes;
+workoutsRouter.get(
+  "/",
+  query("sessionID").isInt().optional(),
+  async (req: any, res): Promise<any> => {
+    try {
+      const { user, errRes } = await getUser(req, res);
+      if (errRes) return errRes;
 
-    const workouts = await getWorkouts(user.id);
-    return res.json(workouts);
-  } catch (err) {
-    return internalError(res, err);
+      const filters = {
+        sessionID: parseIntOrUndefined(req.query.sessionID),
+      } as WorkoutFilters;
+
+      const workouts = await getWorkouts(user.id, filters);
+      return res.json(workouts);
+    } catch (err) {
+      return internalError(res, err);
+    }
   }
-});
+);
 
 workoutsRouter.post(
   "/",
