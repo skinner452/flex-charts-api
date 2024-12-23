@@ -27,7 +27,7 @@ exercisesRouter.get("/", async (req, res): Promise<any> => {
 
 exercisesRouter.post(
   "/",
-  [body("name").isString()], // Aligned with the ExerciseCreate type
+  [body("name").isString().notEmpty()], // Aligned with the ExerciseCreate type
   async (req, res): Promise<any> => {
     try {
       const { user, errRes } = await getUser(req, res);
