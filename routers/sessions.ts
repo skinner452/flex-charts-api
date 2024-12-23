@@ -5,7 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { param, validationResult, query } from "express-validator";
 import {
   createSession,
-  deleteSession,
+  endSession,
   getSession,
   getSessions,
 } from "../domains/sessions";
@@ -86,5 +86,44 @@ sessionsRouter.post("/", async (req, res): Promise<any> => {
     return internalError(res, err);
   }
 });
+
+sessionsRouter.post(
+  "/:id/end",
+  param("id").isInt(),
+  async (req: any, res): Promise<any> => {
+    try {
+      const { user, errRes } = await getUser(req, res);
+      if (errRes) return errRes;
+
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          errors: validationErrors.array(),
+        });
+      }
+
+      const { id: idStr } = req.params;
+      const id = parseInt(idStr, 10);
+
+      const session = await getSession(id, user.id);
+      if (!session) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          error: "Session not found",
+        });
+      }
+
+      if (session.ended_on) {
+        return res.status(StatusCodes.CONFLICT).json({
+          error: "Session already ended",
+        });
+      }
+
+      await endSession(id, user.id);
+      return res.send();
+    } catch (err) {
+      return internalError(res, err);
+    }
+  }
+);
 
 export default sessionsRouter;

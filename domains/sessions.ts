@@ -32,9 +32,9 @@ export const createSession = async (userID: string) => {
   return result.insertId;
 };
 
-export const deleteSession = async (sessionID: number, userID: string) => {
-  await DB.execute("DELETE FROM sessions WHERE id = ? AND user_id = ?", [
-    sessionID,
-    userID,
-  ]);
+export const endSession = async (sessionID: number, userID: string) => {
+  await DB.execute(
+    "UPDATE sessions SET ended_on = NOW() WHERE id = ? AND user_id = ?",
+    [sessionID, userID]
+  );
 };

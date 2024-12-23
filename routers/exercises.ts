@@ -5,7 +5,6 @@ import { StatusCodes } from "http-status-codes";
 import { body, param, validationResult } from "express-validator";
 import {
   createExercise,
-  deleteExercise,
   getExercise,
   getExercises,
 } from "../domains/exercises";

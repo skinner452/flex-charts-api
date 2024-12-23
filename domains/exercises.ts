@@ -25,10 +25,3 @@ export const createExercise = async (data: ExerciseCreate, userID: string) => {
   );
   return result.insertId;
 };
-
-export const deleteExercise = async (exerciseID: number, userID: string) => {
-  await DB.execute("DELETE FROM exercises WHERE id = ? AND user_id = ?", [
-    exerciseID,
-    userID,
-  ]);
-};
