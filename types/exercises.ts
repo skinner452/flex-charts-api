@@ -7,3 +7,15 @@ export type Exercise = {
 export type ExerciseCreate = {
   name: string;
 };
+
+export type ExerciseStatItem = {
+  weight: number;
+  reps: number;
+  sets: number;
+  date: string;
+};
+
+export type ExerciseStats = {
+  best: ExerciseStatItem | null;
+  last: ExerciseStatItem | null;
+};
