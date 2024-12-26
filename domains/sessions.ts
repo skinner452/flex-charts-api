@@ -5,6 +5,7 @@ import { DB } from "../utils/db";
 export const getSessions = async (userID: string, filters?: SessionFilters) => {
   let sql =
     "SELECT id, user_id, created_on, ended_on FROM sessions WHERE user_id = ?";
+  let params: any[] = [userID];
 
   if (filters?.isActive === true) {
     sql += " AND ended_on IS NULL";
@@ -12,7 +13,14 @@ export const getSessions = async (userID: string, filters?: SessionFilters) => {
     sql += " AND ended_on IS NOT NULL";
   }
 
-  const [rows] = await DB.query<any[]>(sql, [userID]);
+  sql += " ORDER BY created_on DESC";
+
+  if (filters?.limit) {
+    sql += " LIMIT ?";
+    params.push(filters.limit);
+  }
+
+  const [rows] = await DB.query<any[]>(sql, params);
   return rows as Session[];
 };
 

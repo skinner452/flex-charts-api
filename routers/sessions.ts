@@ -10,7 +10,7 @@ import {
   getSessions,
 } from "../domains/sessions";
 import { SessionFilters } from "../types/sessions";
-import { parseBoolOrUndefined } from "../utils/parse";
+import { parseBoolOrUndefined, parseIntOrUndefined } from "../utils/parse";
 
 const sessionsRouter = Router();
 
@@ -31,6 +31,7 @@ sessionsRouter.get(
 
       const filters = {
         isActive: parseBoolOrUndefined(req.query.isActive),
+        limit: parseIntOrUndefined(req.query.limit),
       } as SessionFilters;
 
       const sessions = await getSessions(user.id, filters);

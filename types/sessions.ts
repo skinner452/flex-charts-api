@@ -7,4 +7,5 @@ export type Session = {
 
 export type SessionFilters = {
   isActive?: boolean;
+  limit?: number;
 };
