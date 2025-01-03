@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { param, validationResult, query } from "express-validator";
 import {
   createSession,
+  deleteSession,
   endSession,
   getSession,
   getSessions,
@@ -120,6 +121,39 @@ sessionsRouter.post(
       }
 
       await endSession(id, user.id);
+      return res.send();
+    } catch (err) {
+      return internalError(res, err);
+    }
+  }
+);
+
+sessionsRouter.delete(
+  "/:id",
+  param("id").isInt(),
+  async (req: any, res): Promise<any> => {
+    try {
+      const { user, errRes } = await getUser(req, res);
+      if (errRes) return errRes;
+
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          errors: validationErrors.array(),
+        });
+      }
+
+      const { id: idStr } = req.params;
+      const id = parseInt(idStr, 10);
+
+      const session = await getSession(id, user.id);
+      if (!session) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          error: "Session not found",
+        });
+      }
+
+      await deleteSession(id, user.id);
       return res.send();
     } catch (err) {
       return internalError(res, err);

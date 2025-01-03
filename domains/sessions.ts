@@ -46,3 +46,10 @@ export const endSession = async (sessionID: number, userID: string) => {
     [sessionID, userID]
   );
 };
+
+export const deleteSession = async (sessionID: number, userID: string) => {
+  await DB.execute("DELETE FROM sessions WHERE id = ? AND user_id = ?", [
+    sessionID,
+    userID,
+  ]);
+};
