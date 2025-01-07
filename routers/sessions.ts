@@ -120,7 +120,7 @@ sessionsRouter.post(
         });
       }
 
-      await endSession(id, user.id);
+      await endSession(id);
       return res.send();
     } catch (err) {
       return internalError(res, err);
@@ -153,7 +153,7 @@ sessionsRouter.delete(
         });
       }
 
-      await deleteSession(id, user.id);
+      await deleteSession(id);
       return res.send();
     } catch (err) {
       return internalError(res, err);

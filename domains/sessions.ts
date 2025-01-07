@@ -40,16 +40,16 @@ export const createSession = async (userID: string) => {
   return result.insertId;
 };
 
-export const endSession = async (sessionID: number, userID: string) => {
-  await DB.execute(
-    "UPDATE sessions SET ended_on = NOW() WHERE id = ? AND user_id = ?",
-    [sessionID, userID]
-  );
+export const endSession = async (sessionID: number) => {
+  await DB.execute("UPDATE sessions SET ended_on = NOW() WHERE id = ?", [
+    sessionID,
+  ]);
 };
 
-export const deleteSession = async (sessionID: number, userID: string) => {
-  await DB.execute("DELETE FROM sessions WHERE id = ? AND user_id = ?", [
-    sessionID,
-    userID,
-  ]);
+export const deleteSession = async (sessionID: number) => {
+  // Delete all workouts associated with the session
+  await DB.execute("DELETE FROM workouts WHERE session_id = ?", [sessionID]);
+
+  // Delete the session
+  await DB.execute("DELETE FROM sessions WHERE id = ?", [sessionID]);
 };

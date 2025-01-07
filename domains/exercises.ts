@@ -50,9 +50,9 @@ export const getExerciseStats = async (exerciseID: number) => {
     FROM workouts
     JOIN sessions ON sessions.id = workouts.session_id
     WHERE
-      exercise_id = ? AND
+      workouts.exercise_id = ? AND
       sessions.ended_on IS NOT NULL
-    ORDER BY weight DESC
+    ORDER BY workouts.weight DESC
     LIMIT 1`,
     [exerciseID]
   );
@@ -62,7 +62,7 @@ export const getExerciseStats = async (exerciseID: number) => {
     FROM workouts
     JOIN sessions ON sessions.id = workouts.session_id
     WHERE
-      exercise_id = ? AND
+      workouts.exercise_id = ? AND
       sessions.ended_on IS NOT NULL
     ORDER BY sessions.ended_on DESC
     LIMIT 1`,
