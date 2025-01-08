@@ -44,6 +44,11 @@ export const getWorkouts = async (userID: string, filters?: WorkoutFilters) => {
     values.push(filters.sessionID.toString());
   }
 
+  if (filters?.exerciseID) {
+    sql += " AND workouts.exercise_id = ?";
+    values.push(filters.exerciseID.toString());
+  }
+
   const [rows] = await DB.query<any[]>(sql, values);
   return rows.map((row) => castWorkout(row));
 };

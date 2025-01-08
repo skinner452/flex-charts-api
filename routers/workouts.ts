@@ -19,6 +19,7 @@ const workoutsRouter = Router();
 workoutsRouter.get(
   "/",
   query("sessionID").isInt().optional(),
+  query("exerciseID").isInt().optional(),
   async (req: any, res): Promise<any> => {
     try {
       const { user, errRes } = await getUser(req, res);
@@ -26,6 +27,7 @@ workoutsRouter.get(
 
       const filters = {
         sessionID: parseIntOrUndefined(req.query.sessionID),
+        exerciseID: parseIntOrUndefined(req.query.exerciseID),
       } as WorkoutFilters;
 
       const workouts = await getWorkouts(user.id, filters);
