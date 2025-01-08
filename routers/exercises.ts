@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { body, param, validationResult } from "express-validator";
 import {
   createExercise,
+  deleteExercise,
   getExercise,
   getExercises,
   getExerciseStats,
@@ -102,5 +103,27 @@ exercisesRouter.post(
     }
   }
 );
+
+exercisesRouter.delete("/:id", async (req, res): Promise<any> => {
+  try {
+    const { user, errRes } = await getUser(req, res);
+    if (errRes) return errRes;
+
+    const { id: idStr } = req.params;
+    const id = parseInt(idStr, 10);
+
+    const exercise = await getExercise(id, user.id);
+    if (!exercise) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "Exercise not found",
+      });
+    }
+
+    await deleteExercise(id);
+    return res.send();
+  } catch (err) {
+    return internalError(res, err);
+  }
+});
 
 export default exercisesRouter;

@@ -33,6 +33,11 @@ export const createExercise = async (data: ExerciseCreate, userID: string) => {
   return result.insertId;
 };
 
+export const deleteExercise = async (exerciseID: number) => {
+  await DB.execute("DELETE FROM workouts WHERE exercise_id = ?", [exerciseID]);
+  await DB.execute("DELETE FROM exercises WHERE id = ?", [exerciseID]);
+};
+
 const exerciseStatsColumns = `workouts.weight, workouts.reps, workouts.sets, workouts.created_on`;
 
 const castToExerciseStatItem = (row: any) => {
