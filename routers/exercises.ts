@@ -25,6 +25,27 @@ exercisesRouter.get("/", async (req, res): Promise<any> => {
   }
 });
 
+exercisesRouter.get("/:id", async (req, res): Promise<any> => {
+  try {
+    const { user, errRes } = await getUser(req, res);
+    if (errRes) return errRes;
+
+    const { id: idStr } = req.params;
+    const id = parseInt(idStr, 10);
+
+    const exercise = await getExercise(id, user.id);
+    if (!exercise) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "Exercise not found",
+      });
+    }
+
+    return res.json(exercise);
+  } catch (err) {
+    return internalError(res, err);
+  }
+});
+
 exercisesRouter.get(
   "/:id/stats",
   param("id").isInt(),
