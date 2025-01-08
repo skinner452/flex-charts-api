@@ -49,6 +49,16 @@ export const getWorkouts = async (userID: string, filters?: WorkoutFilters) => {
     values.push(filters.exerciseID.toString());
   }
 
+  if (filters?.sort) {
+    const dir = filters.sort.startsWith("-") ? "DESC" : "ASC";
+    const column = filters.sort.replace(/^-/, "");
+
+    // Add allowed sorting columns as needed
+    if (["created_on"].includes(column)) {
+      sql += ` ORDER BY ${column} ${dir}`;
+    }
+  }
+
   const [rows] = await DB.query<any[]>(sql, values);
   return rows.map((row) => castWorkout(row));
 };

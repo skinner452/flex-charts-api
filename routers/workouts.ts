@@ -20,14 +20,23 @@ workoutsRouter.get(
   "/",
   query("sessionID").isInt().optional(),
   query("exerciseID").isInt().optional(),
+  query("sort").isString().optional(),
   async (req: any, res): Promise<any> => {
     try {
       const { user, errRes } = await getUser(req, res);
       if (errRes) return errRes;
 
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          errors: validationErrors.array(),
+        });
+      }
+
       const filters = {
         sessionID: parseIntOrUndefined(req.query.sessionID),
         exerciseID: parseIntOrUndefined(req.query.exerciseID),
+        sort: req.query.sort,
       } as WorkoutFilters;
 
       const workouts = await getWorkouts(user.id, filters);
