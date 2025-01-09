@@ -38,7 +38,7 @@ export const deleteExercise = async (exerciseID: number) => {
   await DB.execute("DELETE FROM exercises WHERE id = ?", [exerciseID]);
 };
 
-const exerciseStatsColumns = `workouts.weight, workouts.reps, workouts.sets, workouts.created_on`;
+const exerciseStatsColumns = `weight, reps, sets, created_on`;
 
 const castToExerciseStatItem = (row: any) => {
   return {
@@ -53,10 +53,7 @@ export const getExerciseStats = async (exerciseID: number) => {
   const [bestRows] = await DB.query<any[]>(
     `SELECT ${exerciseStatsColumns}
     FROM workouts
-    JOIN sessions ON sessions.id = workouts.session_id
-    WHERE
-      workouts.exercise_id = ? AND
-      sessions.ended_on IS NOT NULL
+    WHERE workouts.exercise_id = ?
     ORDER BY workouts.weight DESC
     LIMIT 1`,
     [exerciseID]
@@ -65,11 +62,8 @@ export const getExerciseStats = async (exerciseID: number) => {
   const [lastRows] = await DB.query<any[]>(
     `SELECT ${exerciseStatsColumns}
     FROM workouts
-    JOIN sessions ON sessions.id = workouts.session_id
-    WHERE
-      workouts.exercise_id = ? AND
-      sessions.ended_on IS NOT NULL
-    ORDER BY sessions.ended_on DESC
+    WHERE workouts.exercise_id = ?
+    ORDER BY created_on DESC
     LIMIT 1`,
     [exerciseID]
   );
