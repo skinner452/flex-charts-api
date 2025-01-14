@@ -6,6 +6,7 @@ export type Exercise = {
 
 export type ExerciseCreate = {
   name: string;
+  exercise_type_id: number;
 };
 
 export type ExerciseStatItem = {
