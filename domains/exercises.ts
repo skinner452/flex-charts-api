@@ -7,7 +7,7 @@ import {
 } from "../types/exercises";
 import { DB } from "../utils/db";
 
-const exerciseColumns = `id, user_id, name`;
+const exerciseColumns = `id, user_id, name, exercise_type_id`;
 
 export const getExercises = async (userID: string) => {
   const [rows] = await DB.query<any[]>(
