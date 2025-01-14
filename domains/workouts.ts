@@ -76,10 +76,22 @@ export const getWorkout = async (workoutID: number, userID: string) => {
   return castWorkout(rows[0]);
 };
 
-export const createWorkout = async (userID: string, data: WorkoutCreate) => {
+export const createWorkout = async (data: WorkoutCreate) => {
   const [result] = await DB.execute<ResultSetHeader>(
-    "INSERT INTO workouts (session_id, exercise_id, weight, reps, sets) VALUES (?, ?, ?, ?, ?)",
-    [data.sessionID, data.exerciseID, data.weight, data.reps, data.sets]
+    `INSERT INTO workouts
+    (session_id, exercise_id, weight, reps, sets, distance, duration_seconds, incline)
+    VALUES
+    (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      data.sessionID,
+      data.exerciseID,
+      data.weight,
+      data.reps,
+      data.sets,
+      data.distance,
+      data.durationSeconds,
+      data.incline,
+    ]
   );
   return result.insertId;
 };

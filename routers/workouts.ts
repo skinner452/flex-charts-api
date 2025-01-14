@@ -52,9 +52,12 @@ workoutsRouter.post(
   [
     body("sessionID").isInt(), // Aligned with the WorkoutCreate type
     body("exerciseID").isInt(),
-    body("reps").isInt(),
-    body("sets").isInt(),
-    body("weight").isInt(),
+    body("reps").isInt().optional(),
+    body("sets").isInt().optional(),
+    body("weight").isInt().optional(),
+    body("distance").isFloat().optional(),
+    body("durationSeconds").isInt().optional(),
+    body("incline").isFloat().optional(),
   ],
   async (req, res): Promise<any> => {
     try {
@@ -82,7 +85,7 @@ workoutsRouter.post(
         });
       }
 
-      const workoutID = await createWorkout(user.id, validatedBody);
+      const workoutID = await createWorkout(validatedBody);
       const workout = await getWorkout(workoutID, user.id);
       return res.json(workout);
     } catch (err) {

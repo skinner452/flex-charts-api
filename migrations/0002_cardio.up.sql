@@ -27,6 +27,6 @@ CHANGE COLUMN `sets` `sets` INT NULL DEFAULT NULL ;
 
 -- Add cardio columns to workouts table
 ALTER TABLE `workouts` 
-ADD COLUMN `distance` DECIMAL(6,2) NULL DEFAULT NULL AFTER `sets`,
-ADD COLUMN `duration_seconds` VARCHAR(45) NULL DEFAULT NULL AFTER `distance`,
-ADD COLUMN `incline` DECIMAL(6,2) NULL DEFAULT NULL AFTER `duration_seconds`;
+ADD COLUMN `distance` DOUBLE NULL DEFAULT NULL AFTER `sets`,
+ADD COLUMN `duration_seconds` INT NULL DEFAULT NULL AFTER `distance`,
+ADD COLUMN `incline` DOUBLE NULL DEFAULT NULL AFTER `duration_seconds`;
