@@ -29,4 +29,4 @@ CHANGE COLUMN `sets` `sets` INT NULL DEFAULT NULL ;
 ALTER TABLE `workouts` 
 ADD COLUMN `distance` DECIMAL(6,2) NULL DEFAULT NULL AFTER `sets`,
 ADD COLUMN `duration_seconds` VARCHAR(45) NULL DEFAULT NULL AFTER `distance`,
-ADD COLUMN `resistance` DECIMAL(6,2) NULL DEFAULT NULL AFTER `duration_seconds`;
+ADD COLUMN `incline` DECIMAL(6,2) NULL DEFAULT NULL AFTER `duration_seconds`;

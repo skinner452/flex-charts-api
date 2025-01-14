@@ -1,6 +1,6 @@
 -- Drop cardio columns from workouts table
 ALTER TABLE `workouts` 
-DROP COLUMN `resistance`,
+DROP COLUMN `incline`,
 DROP COLUMN `duration_seconds`,
 DROP COLUMN `distance`;
 
