@@ -1,3 +1,5 @@
+export type ExerciseStats = StrengthExerciseStats | CardioExerciseStats;
+
 export type StrengthExerciseStatItem = {
   weight: number;
   reps: number;
