@@ -8,9 +8,9 @@ import {
   deleteExercise,
   getExercise,
   getExercises,
-  getExerciseStats,
 } from "../domains/exercises";
 import { ExerciseCreate } from "../types/exercises";
+import { getExerciseStats } from "../domains/exercise_stats";
 
 const exercisesRouter = Router();
 
@@ -65,7 +65,7 @@ exercisesRouter.get(
         });
       }
 
-      const stats = await getExerciseStats(id);
+      const stats = await getExerciseStats(id, exercise.exercise_type_id);
       return res.json(stats);
     } catch (err) {
       return internalError(res, err);

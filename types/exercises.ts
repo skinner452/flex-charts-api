@@ -11,15 +11,3 @@ export type ExerciseCreate = {
   name: string;
   exercise_type_id: ExerciseTypeID;
 };
-
-export type ExerciseStatItem = {
-  weight: number;
-  reps: number;
-  sets: number;
-  date: string;
-};
-
-export type ExerciseStats = {
-  best: ExerciseStatItem | null;
-  last: ExerciseStatItem | null;
-};

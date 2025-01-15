@@ -8,10 +8,14 @@ const workoutColumns = `
   workouts.weight,
   workouts.reps,
   workouts.sets,
+  workouts.distance,
+  workouts.duration_seconds,
+  workouts.incline,
   workouts.created_on,
   exercises.id AS exercise_id,
   exercises.user_id AS exercise_user_id,
-  exercises.name AS exercise_name
+  exercises.name AS exercise_name,
+  exercises.exercise_type_id
 `;
 
 const castWorkout = (row: any) => {
@@ -21,11 +25,15 @@ const castWorkout = (row: any) => {
     weight: row.weight,
     reps: row.reps,
     sets: row.sets,
+    distance: row.distance,
+    durationSeconds: row.duration_seconds,
+    incline: row.incline,
     created_on: row.created_on,
     exercise: {
       id: row.exercise_id,
       user_id: row.exercise_user_id,
       name: row.exercise_name,
+      exercise_type_id: row.exercise_type_id,
     },
   } as Workout;
 };

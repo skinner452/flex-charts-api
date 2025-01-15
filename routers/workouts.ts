@@ -13,6 +13,7 @@ import { WorkoutCreate, WorkoutFilters } from "../types/workouts";
 import { getExercise } from "../domains/exercises";
 import { getSession } from "../domains/sessions";
 import { parseIntOrUndefined } from "../utils/parse";
+import { isFloatOrNull, isIntOrNull } from "../utils/nullableValidators";
 
 const workoutsRouter = Router();
 
@@ -52,12 +53,12 @@ workoutsRouter.post(
   [
     body("sessionID").isInt(), // Aligned with the WorkoutCreate type
     body("exerciseID").isInt(),
-    body("reps").isInt().optional(),
-    body("sets").isInt().optional(),
-    body("weight").isInt().optional(),
-    body("distance").isFloat().optional(),
-    body("durationSeconds").isInt().optional(),
-    body("incline").isFloat().optional(),
+    body("reps").custom(isIntOrNull),
+    body("sets").custom(isIntOrNull),
+    body("weight").custom(isIntOrNull),
+    body("distance").custom(isFloatOrNull),
+    body("durationSeconds").custom(isIntOrNull),
+    body("incline").custom(isFloatOrNull),
   ],
   async (req, res): Promise<any> => {
     try {
