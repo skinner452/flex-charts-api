@@ -65,6 +65,8 @@ export const getWorkouts = async (userID: string, filters?: WorkoutFilters) => {
     if (["created_on"].includes(column)) {
       sql += ` ORDER BY ${column} ${dir}`;
     }
+  } else {
+    sql += " ORDER BY workouts.created_on DESC";
   }
 
   const [rows] = await DB.query<any[]>(sql, values);

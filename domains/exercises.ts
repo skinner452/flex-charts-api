@@ -6,7 +6,7 @@ const exerciseColumns = `id, user_id, name, exercise_type_id`;
 
 export const getExercises = async (userID: string) => {
   const [rows] = await DB.query<any[]>(
-    `SELECT ${exerciseColumns} FROM exercises WHERE user_id = ?`,
+    `SELECT ${exerciseColumns} FROM exercises WHERE user_id = ? ORDER BY name ASC`,
     [userID]
   );
   return rows as Exercise[];
