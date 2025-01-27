@@ -1,6 +1,11 @@
 {
   "name": "flex-charts-api",
   "version": "1.0.0",
+  "scripts": {
+    "local": "serverless offline --stage local",
+    "dev": "serverless offline --stage dev",
+    "deploy": "serverless deploy"
+  },
   "description": "",
   "dependencies": {
     "aws-lambda": "^1.0.7",
