@@ -11,3 +11,7 @@ export type ExerciseCreate = {
   name: string;
   exercise_type_id: ExerciseTypeID;
 };
+
+export type ExerciseUpdate = {
+  name: string;
+};

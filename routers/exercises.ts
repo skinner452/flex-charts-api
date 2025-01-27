@@ -8,8 +8,9 @@ import {
   deleteExercise,
   getExercise,
   getExercises,
+  updateExercise,
 } from "../domains/exercises";
-import { ExerciseCreate } from "../types/exercises";
+import { Exercise, ExerciseCreate, ExerciseUpdate } from "../types/exercises";
 import { getExerciseStats } from "../domains/exercise_stats";
 
 const exercisesRouter = Router();
@@ -103,6 +104,43 @@ exercisesRouter.post(
     }
   }
 );
+
+exercisesRouter.put("/:id", async (req, res): Promise<any> => {
+  try {
+    const { user, errRes } = await getUser(req, res);
+    if (errRes) return errRes;
+
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        errors: validationErrors.array(),
+      });
+    }
+
+    const { id: idStr } = req.params;
+    const id = parseInt(idStr, 10);
+
+    const exercise = await getExercise(id, user.id);
+    if (!exercise) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "Exercise not found",
+      });
+    }
+
+    const validatedBody = req.body as ExerciseUpdate;
+
+    await updateExercise(id, validatedBody);
+    const updatedExercise = await getExercise(id, user.id);
+    return res.json(updatedExercise);
+  } catch (err) {
+    if (err.code === "ER_DUP_ENTRY") {
+      return res.status(StatusCodes.CONFLICT).json({
+        error: "Name already exists",
+      });
+    }
+    return internalError(res, err);
+  }
+});
 
 exercisesRouter.delete("/:id", async (req, res): Promise<any> => {
   try {

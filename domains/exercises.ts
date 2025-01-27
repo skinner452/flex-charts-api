@@ -1,5 +1,5 @@
 import { ResultSetHeader } from "mysql2";
-import { Exercise, ExerciseCreate } from "../types/exercises";
+import { Exercise, ExerciseCreate, ExerciseUpdate } from "../types/exercises";
 import { DB } from "../utils/db";
 
 const exerciseColumns = `id, user_id, name, exercise_type_id`;
@@ -26,6 +26,16 @@ export const createExercise = async (data: ExerciseCreate, userID: string) => {
     [data.name, userID, data.exercise_type_id]
   );
   return result.insertId;
+};
+
+export const updateExercise = async (
+  exerciseID: number,
+  data: ExerciseUpdate
+) => {
+  await DB.execute("UPDATE exercises SET name = ? WHERE id = ?", [
+    data.name,
+    exerciseID,
+  ]);
 };
 
 export const deleteExercise = async (exerciseID: number) => {
