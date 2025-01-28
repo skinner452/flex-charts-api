@@ -45,7 +45,7 @@ export const getWorkouts = async (userID: string, filters?: WorkoutFilters) => {
     JOIN exercises ON workouts.exercise_id = exercises.id
     WHERE exercises.user_id = ?
   `;
-  let values = [userID];
+  const values = [userID];
 
   if (filters?.sessionID) {
     sql += " AND workouts.session_id = ?";

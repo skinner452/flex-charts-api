@@ -16,7 +16,7 @@ app.use("/workouts", workoutsRouter);
 app.use("/sessions", sessionsRouter);
 
 // Unhandled routes should 404
-app.use((_req, res, _next): any => {
+app.use((_req, res): any => {
   return res.status(StatusCodes.NOT_FOUND).json({
     error: "Not Found",
   });

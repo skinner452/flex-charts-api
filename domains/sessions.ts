@@ -5,7 +5,7 @@ import { DB } from "../utils/db";
 export const getSessions = async (userID: string, filters?: SessionFilters) => {
   let sql =
     "SELECT id, user_id, created_on, ended_on FROM sessions WHERE user_id = ?";
-  let params: any[] = [userID];
+  const params: any[] = [userID];
 
   if (filters?.isActive === true) {
     sql += " AND ended_on IS NULL";

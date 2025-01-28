@@ -10,7 +10,7 @@ import {
   getExercises,
   updateExercise,
 } from "../domains/exercises";
-import { Exercise, ExerciseCreate, ExerciseUpdate } from "../types/exercises";
+import { ExerciseCreate, ExerciseUpdate } from "../types/exercises";
 import { getExerciseStats } from "../domains/exercise_stats";
 
 const exercisesRouter = Router();

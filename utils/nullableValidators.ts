@@ -3,7 +3,7 @@ export const isIntOrNull = (value: any) => {
   try {
     parseInt(value);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
@@ -13,7 +13,7 @@ export const isFloatOrNull = (value: any) => {
   try {
     parseFloat(value);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
