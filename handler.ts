@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import exercisesRouter from "./routers/exercises";
 import workoutsRouter from "./routers/workouts";
 import sessionsRouter from "./routers/sessions";
+import statsRouter from "./routers/stats";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/exercises", exercisesRouter);
 app.use("/workouts", workoutsRouter);
 app.use("/sessions", sessionsRouter);
+app.use("/stats", statsRouter);
 
 // Unhandled routes should 404
 app.use((_req, res): any => {
