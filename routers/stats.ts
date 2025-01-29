@@ -4,6 +4,7 @@ import { internalError } from "../utils/errors";
 import { query, validationResult } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 import { getWeeklyStats } from "../domains/stats";
+import { WeeklyStatsParams } from "../types/stats";
 
 const statsRouter = Router();
 
@@ -22,7 +23,9 @@ statsRouter.get(
         });
       }
 
-      const weekStart = new Date(req.query.weekStart);
+      const queryParams = req.query as WeeklyStatsParams;
+
+      const weekStart = new Date(queryParams.weekStart);
       const weeklyStats = await getWeeklyStats(user.id, weekStart);
       return res.json(weeklyStats);
     } catch (err) {

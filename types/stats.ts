@@ -1,3 +1,7 @@
+export type WeeklyStatsParams = {
+  weekStart: string; // ISO8601 date string
+};
+
 export type WeeklyTotals = {
   weight: number;
   distance: number;
