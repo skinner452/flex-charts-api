@@ -4,7 +4,7 @@ import { DB } from "../utils/db";
 
 const exerciseStatsColumns = `weight, reps, sets, distance, duration_seconds, incline, created_on`;
 
-const strengthOrderBy = `weight DESC`;
+const strengthOrderBy = `weight DESC, reps DESC`;
 const cardioOrderBy = `distance DESC`;
 
 const castToExerciseStatItem = (row: any) => {
