@@ -6,7 +6,7 @@ const getWeeklyTotals = async (userID: string, weekStart: Date) => {
   weekEnd.setDate(weekEnd.getDate() + 7);
 
   const workoutQuery = `
-    SELECT SUM(workouts.weight) as weight, SUM(workouts.distance) as distance
+    SELECT SUM(workouts.weight * workouts.reps * workouts.sets) as weight, SUM(workouts.distance) as distance
     FROM workouts
     JOIN sessions ON sessions.id = workouts.session_id
     WHERE sessions.user_id = ?
